@@ -6,10 +6,11 @@ exports.up = function (knex) {
   return knex.schema.createTable("wallets", (t) => {
     t.string("wallet_uid").primary().unique();
     t.string("user_uid");
-    t.string("public_key");
-    t.string("encrypted_private_key");
+    t.string("public_key", 256);
+    t.string("encrypted_private_key", 640);
     t.integer("balance");
-    t.json("initialization_vector");
+    t.string("initialization_vector");
+    t.string("verification_string");
   });
 };
 

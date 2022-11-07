@@ -10,8 +10,8 @@ exports.up = function (knex) {
     t.string("phone_number");
     t.string("email");
     t.string("id_number");
-    t.string("hashed_password");
-    t.string("wallet_hash");
+    t.string("hashed_password", 512);
+    t.string("refreshToken").defaultTo(null);
   });
 };
 

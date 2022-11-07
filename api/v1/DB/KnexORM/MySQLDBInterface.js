@@ -6,9 +6,9 @@ class MySQLDB extends Events {
     this.knex = knex;
   }
 
-  async insert(table, values, returnValues) {
+  async insert(table, values, returnValues = []) {
     const rowsInserted = await this.knex
-      .insert([...values], [...returnValues])
+      .insert(values, [...returnValues])
       .into(table);
 
     if (rowsInserted === 0) throw new Error("Error inserting rows");
@@ -24,14 +24,29 @@ class MySQLDB extends Events {
     this.emit("rowsUpdated", updatedRows);
   }
 
-  delete() {}
+  delete(table, filter) {
+    this.knex(table).where(filter).delete();
+  }
 
   async select(table, fields) {
     if (fields.length == 0) {
-      const results = await knex.select().from(table);
+      const results = await this.knex.select().from(table);
       return results;
     } else {
-      const res = await knex.select(...fields).from(table);
+      const res = await this.knex.select(...fields).from(table);
+
+      return res;
+    }
+  }
+
+  async find(table, filter, fields) {
+    if (fields.length == 0) {
+      const results = await this.knex(table).where(filter).select();
+      return results;
+    } else {
+      const res = await this.knex(table)
+        .where(filter)
+        .select(...fields);
 
       return res;
     }

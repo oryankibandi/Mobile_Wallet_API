@@ -10,6 +10,7 @@ class User {
     this.id_number = userDetails.id_number;
     this.hashed_password = userDetails.hashed_password;
     this.wallet_hash = userDetails.wallet_hash;
+    this.refreshToken = userDetails.refreshToken ?? null;
   }
 
   validate(userDetails) {
@@ -30,6 +31,28 @@ class User {
     if (!email) throw new Error("email not provided");
     if (!id_number) throw new Error("id_number not provided");
     if (!hashed_password) throw new Error("hashed_password not provided");
-    if (!wallet_hash) throw new Error("wallet_hash not provided");
+  }
+
+  prepend() {
+    this.user_uid = "user".concat("_", this.user_uid);
+  }
+
+  addRefreshToken(refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
+  toFormattedJson() {
+    return Object.freeze({
+      user_uid: this.user_uid,
+      first_name: this.first_name,
+      last_name: this.last_name,
+      phone_number: this.phone_number,
+      email: this.email,
+      id_number: this.id_number,
+      hashed_password: this.hashed_password,
+      refreshToken: this.refreshToken ? this.refreshToken : null,
+    });
   }
 }
+
+module.exports = User;
