@@ -39,7 +39,7 @@ class MySQLDB extends Events {
     }
   }
 
-  async find(table, filter, fields) {
+  async find(table, filter, fields = []) {
     if (fields.length == 0) {
       const results = await this.knex(table).where(filter).select();
       return results;

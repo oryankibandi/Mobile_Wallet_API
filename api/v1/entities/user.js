@@ -53,6 +53,16 @@ class User {
       refreshToken: this.refreshToken ? this.refreshToken : null,
     });
   }
+
+  toFilteredJson() {
+    return Object.freeze({
+      user_uid: this.user_uid,
+      first_name: this.first_name,
+      last_name: this.last_name,
+      phone_number: this.phone_number,
+      email: this.email,
+    });
+  }
 }
 
 module.exports = User;

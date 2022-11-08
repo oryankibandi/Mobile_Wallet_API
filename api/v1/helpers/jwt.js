@@ -7,35 +7,39 @@ class JWT extends Events {
     super();
   }
 
-  async generateAccessToken(payload, duration) {
-    jwt.sign(
-      payload,
-      process.env.ACCESSTOKENSECRET,
-      { expiresIn: "6h" },
-      (err, accessToken) => {
-        if (err) throw new Error(err.message);
+  async generateAccessToken(payload, duration = "6h") {
+    try {
+      const token = jwt.sign(payload, process.env.REFRESHTOKENSECRET, {
+        expiresIn: duration,
+      });
 
-        this.emit("accessTokenGenerated", accessToken);
-      }
-    );
+      this.emit("accessTokenGenerated");
+
+      return token;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
-  async generateRefreshToken(payload, duration) {
-    jwt.sign(
-      payload,
-      process.env.REFRESHTOKENSECRET,
-      { expiresIn: "6d" },
-      (err, refreshToken) => {
-        if (err) throw new Error(err.message);
+  async generateRefreshToken(payload, duration = "6d") {
+    try {
+      const token = jwt.sign(payload, process.env.REFRESHTOKENSECRET, {
+        expiresIn: duration,
+      });
 
-        this.emit("refreshTokenGenerated", refreshToken);
-      }
-    );
+      this.emit("refreshTokenGenerated");
+
+      return token;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   async verify(token, secret) {
     jwt.verify(token, secret, (err, decoded) => {
-      if (err) throw new Error(err.message);
+      if (err) {
+        this.emit("invalidToken");
+      }
 
       this.emit("decoded", decoded);
     });

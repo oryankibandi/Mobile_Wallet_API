@@ -5,4 +5,6 @@ let router = express.Router();
 
 router.route("/create").post(userController.createUserController);
 
+router.route("/login").post(userController.loginUserController);
+
 module.exports = router;

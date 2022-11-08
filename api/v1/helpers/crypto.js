@@ -69,15 +69,19 @@ class Crypto extends Events {
 
     hash.update(data);
 
+    const new_hash = hash.digest("hex");
+
     switch (type) {
       case "password":
-        this.emit("passwordHash", hash.digest("hex"));
+        this.emit("passwordHash", new_hash);
         break;
       case "verification":
-        this.emit("verificationHash", hash.digest("hex"));
+        this.emit("verificationHash", new_hash);
       default:
         break;
     }
+
+    return new_hash;
   }
 
   createKeyPair() {

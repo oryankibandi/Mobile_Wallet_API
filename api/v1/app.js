@@ -11,6 +11,7 @@ const port = process.env.PORT || 3030;
 const cors = require("cors");
 
 const createDBConnection = require("./middleware/createDBConnection");
+const verifyJwt = require("./middleware/verifyToken");
 const userRoute = require("./routes/userRoute");
 
 const app = express();
@@ -33,6 +34,7 @@ if (cluster.isPrimary) {
   app.use(cookieParser());
 
   app.use(createDBConnection);
+  app.use(verifyJwt);
 
   app.use("/user", userRoute);
 

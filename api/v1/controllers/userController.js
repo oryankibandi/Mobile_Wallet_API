@@ -1,6 +1,7 @@
 const userUseCase = require("../use_cases/user/userUseCaseInterface");
 const MySQLDB = require("../DB/KnexORM/MySQLDBInterface");
 const Crypto = require("../helpers/crypto");
+const JWT = require("../helpers/jwt");
 const encoder = require("../helpers/encoder");
 
 const createUserController = async (req, res) => {
@@ -68,6 +69,50 @@ const createUserController = async (req, res) => {
   }
 };
 
+const loginUserController = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email) {
+    return res.status(401).json({
+      status: "ERROR",
+      message: "email not provided",
+    });
+  }
+  if (!password) {
+    return res.status(401).json({
+      status: "ERROR",
+      message: "password not provided",
+    });
+  }
+
+  try {
+    const dbInstance = new MySQLDB(req.knex);
+    const cryptoInstance = new Crypto();
+    const jwtInstance = new JWT();
+
+    const userData = await userUseCase.loginUser(
+      req.body,
+      dbInstance,
+      jwtInstance,
+      cryptoInstance
+    );
+
+    res.cookie("jwt", userData.refreshToken);
+    delete userData.refreshToken;
+
+    return res.status(200).json({
+      status: "SUCCESS",
+      data: userData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "ERROR",
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createUserController,
+  loginUserController,
 };

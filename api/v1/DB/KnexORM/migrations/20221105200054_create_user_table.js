@@ -11,7 +11,7 @@ exports.up = function (knex) {
     t.string("email");
     t.string("id_number");
     t.string("hashed_password", 512);
-    t.string("refreshToken").defaultTo(null);
+    t.string("refreshToken", 640).defaultTo(null);
   });
 };
 
