@@ -6,7 +6,7 @@ const verifyJwt = async (req, res, next) => {
     return next();
   }
 
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization || req.headers.Authorization;
 
   if (!authHeader) {
     res.status(401).json({
@@ -14,18 +14,21 @@ const verifyJwt = async (req, res, next) => {
       message: "no token provided",
     });
   } else {
+    console.log("AuthHeader: ", authHeader);
     const jwt = authHeader.split(" ")[1];
     const jwtInstance = new JWT();
     jwtInstance.on("decoded", (decoded) => {
+      console.log("Decoded: ", decoded);
       req.user_uid = decoded.user_uid;
       req.first_name = decoded.first_name;
       req.last_name = decoded.last_name;
       req.email = decoded.email;
 
-      next();
+      return next();
     });
 
     jwtInstance.on("invalidToken", () => {
+      console.log("Invalid Token");
       res.status(401).json({
         status: "ERROR",
         message: "invalid token",

@@ -7,6 +7,7 @@ class Wallet {
     this.public_key = wallet_details.public_key;
     this.encrypted_private_key = wallet_details.encrypted_private_key;
     this.balance = wallet_details.balance;
+    this.currency = wallet_details.currency;
     this.initialization_vector = wallet_details.initialization_vector;
     this.verification_string = wallet_details.verification_string;
   }
@@ -43,9 +44,14 @@ class Wallet {
       public_key: this.public_key,
       encrypted_private_key: this.encrypted_private_key,
       balance: this.balance,
+      currency: this.currency,
       initialization_vector: this.initialization_vector,
       verification_string: this.verification_string,
     });
+  }
+
+  verifyTransfer(amount) {
+    if (amount > this.balance) throw new Error("Insufficient funds");
   }
 }
 

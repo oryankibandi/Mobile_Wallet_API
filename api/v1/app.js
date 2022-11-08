@@ -13,6 +13,7 @@ const cors = require("cors");
 const createDBConnection = require("./middleware/createDBConnection");
 const verifyJwt = require("./middleware/verifyToken");
 const userRoute = require("./routes/userRoute");
+const walletRoute = require("./routes/walletRoute");
 
 const app = express();
 const numCPUs = cpus().length;
@@ -37,6 +38,7 @@ if (cluster.isPrimary) {
   app.use(verifyJwt);
 
   app.use("/user", userRoute);
+  app.use("/wallet", walletRoute);
 
   app.listen(port, () => {
     console.log("Listening on port ", port);

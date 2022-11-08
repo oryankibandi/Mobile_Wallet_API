@@ -11,6 +11,7 @@ createWallet = (dbInstance, cryptoInstance, encoder, user_uid, user_pin) => {
   wallet.wallet_uid = cryptoInstance.generateUid();
   wallet.user_uid = user_uid;
   wallet.balance = 0;
+  wallet.currency = "NGN";
 
   cryptoInstance.on("encrypted", (iv, encrypted) => {
     wallet.encrypted_private_key = encrypted;

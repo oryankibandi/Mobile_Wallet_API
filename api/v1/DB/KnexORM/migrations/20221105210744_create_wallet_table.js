@@ -9,6 +9,7 @@ exports.up = function (knex) {
     t.string("public_key", 256);
     t.string("encrypted_private_key", 640);
     t.integer("balance");
+    t.string("currency");
     t.string("initialization_vector");
     t.string("verification_string");
   });
