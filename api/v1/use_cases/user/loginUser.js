@@ -15,9 +15,6 @@ const loginUser = async (
   if (existing_user.length === 0) throw new Error("User doesn't exist");
   if (existing_user.length > 1) throw new Error("multiple users found");
 
-  console.log("existing user:", existing_user[0]);
-  console.log("Length of UserObj: ", existing_user.length);
-
   const rehashed_password = cryptoInstance.generateHash(
     userDetails.password,
     "password"

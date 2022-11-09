@@ -1,8 +1,8 @@
+require("dotenv").config();
 const userUseCase = require("../use_cases/user/userUseCaseInterface");
 const MySQLDB = require("../DB/KnexORM/MySQLDBInterface");
 const Crypto = require("../helpers/crypto");
 const JWT = require("../helpers/jwt");
-const encoder = require("../helpers/encoder");
 
 const createUserController = async (req, res) => {
   const userDetails = req.body;
@@ -51,8 +51,7 @@ const createUserController = async (req, res) => {
     const new_user_email = await userUseCase.createUser(
       userDetails,
       dbInstance,
-      cryptoInstance,
-      encoder
+      cryptoInstance
     );
 
     res.status(200).json({
@@ -112,7 +111,41 @@ const loginUserController = async (req, res) => {
   }
 };
 
+const refreshTokenController = async (req, res) => {
+  const cookies = req.cookies;
+
+  if (!cookies?.jwt) {
+    return res.status(401).json({
+      error: "no refreshToken provided",
+    });
+  }
+
+  try {
+    const dbInstance = new MySQLDB(req.knex);
+    const jwtInstance = new JWT();
+    const accessToken = await userUseCase.refreshUser(
+      cookies.jwt,
+      dbInstance,
+      jwtInstance,
+      process.env.REFRESHTOKENSECRET
+    );
+
+    res.status(200).json({
+      status: "SUCCESS",
+      data: {
+        accessToken: accessToken,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "ERROR",
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createUserController,
   loginUserController,
+  refreshTokenController,
 };

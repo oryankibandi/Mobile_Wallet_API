@@ -1,7 +1,7 @@
 const User = require("../../entities/user");
 const walletUseCaseInterface = require("../wallet/walletUseCaseInterface");
 
-const createUser = async (userDetails, dbInstance, cryptoInstance, encoder) => {
+const createUser = async (userDetails, dbInstance, cryptoInstance) => {
   const existing_user = await dbInstance.find(
     "users",
     { email: userDetails.email },
@@ -27,7 +27,6 @@ const createUser = async (userDetails, dbInstance, cryptoInstance, encoder) => {
     walletUseCaseInterface.createWallet(
       dbInstance,
       cryptoInstance,
-      encoder,
       new_user.user_uid,
       userDetails.user_pin
     );

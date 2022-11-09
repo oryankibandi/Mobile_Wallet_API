@@ -6,7 +6,7 @@ const verifyJwt = async (req, res, next) => {
     return next();
   }
 
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization || req.headers.Authorization;
 
   if (!authHeader) {
     res.status(401).json({
@@ -22,14 +22,21 @@ const verifyJwt = async (req, res, next) => {
       req.last_name = decoded.last_name;
       req.email = decoded.email;
 
-      next();
+      return next();
     });
 
-    jwtInstance.on("invalidToken", () => {
-      res.status(401).json({
-        status: "ERROR",
-        message: "invalid token",
-      });
+    jwtInstance.on("invalidToken", (error) => {
+      if (error.message === "jwt expired") {
+        res.status(401).json({
+          status: "ERROR",
+          message: "expired token",
+        });
+      } else {
+        res.status(401).json({
+          status: "ERROR",
+          message: "invalid token",
+        });
+      }
     });
 
     jwtInstance.verify(jwt, process.env.ACCESSTOKENSECRET);
