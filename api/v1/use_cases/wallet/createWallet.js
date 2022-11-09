@@ -1,6 +1,6 @@
 const Wallet = require("../../entities/wallet");
 
-createWallet = (dbInstance, cryptoInstance, encoder, user_uid, user_pin) => {
+createWallet = (dbInstance, cryptoInstance, user_uid, user_pin) => {
   if (!dbInstance) throw new Error("No DB instance provided");
   if (!cryptoInstance) throw new Error("No crypto instance provided");
   if (!user_uid) throw new Error("user_uid not provided");
@@ -15,7 +15,7 @@ createWallet = (dbInstance, cryptoInstance, encoder, user_uid, user_pin) => {
 
   cryptoInstance.on("encrypted", (iv, encrypted) => {
     wallet.encrypted_private_key = encrypted;
-    wallet.initialization_vector = encoder.toHexString(iv);
+    wallet.initialization_vector = iv;
 
     const new_wallet = new Wallet(wallet);
     new_wallet.prepend();

@@ -50,8 +50,23 @@ class Wallet {
     });
   }
 
+  getBalance() {
+    return Object.freeze({
+      balance: this.balance,
+      currency: this.currency,
+    });
+  }
+
   verifyTransfer(amount) {
     if (amount > this.balance) throw new Error("Insufficient funds");
+  }
+
+  credit(amount) {
+    this.balance -= amount;
+  }
+
+  debit(amount) {
+    this.balance += amount;
   }
 }
 

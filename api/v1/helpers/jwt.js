@@ -36,13 +36,13 @@ class JWT extends Events {
   }
 
   async verify(token, secret) {
-    jwt.verify(token, secret, (err, decoded) => {
-      if (err) {
-        this.emit("invalidToken");
-      }
-
+    try {
+      const decoded = jwt.verify(token, secret);
       this.emit("decoded", decoded);
-    });
+      return decoded;
+    } catch (error) {
+      this.emit("invalidToken", error);
+    }
   }
 }
 

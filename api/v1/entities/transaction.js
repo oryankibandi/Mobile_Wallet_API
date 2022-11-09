@@ -3,7 +3,6 @@ class Transaction {
     if (transactionData.user_uid.substr(0, 5) !== "user_") {
       throw new Error("Invalid user_uid");
     }
-    console.log("transactionData: ", transactionData);
 
     this.id = transactionData.id ?? null;
     this.user_uid = transactionData.user_uid;

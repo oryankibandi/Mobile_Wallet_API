@@ -7,7 +7,9 @@ const {
   randomUUID,
   createHash,
   generateKeyPair,
+  randomBytes,
 } = require("node:crypto");
+const { Buffer } = require("node:buffer");
 const Events = require("node:events");
 
 class Crypto extends Events {
@@ -15,21 +17,19 @@ class Crypto extends Events {
     super();
   }
 
-  cipher(cipherText, password) {
+  cipher(cipherText, pin) {
     const algorithm = "aes-192-cbc";
 
-    scrypt(password, "salt", 24, (err, key) => {
+    scrypt(pin, "salt", 24, (err, key) => {
       if (err) throw err;
 
-      randomFill(new Uint8Array(16), (err, iv) => {
-        if (err) throw err;
-        const cipher = createCipheriv(algorithm, key, iv);
+      const iv = Buffer.alloc(16, randomBytes(8).toString("base64"), "utf-8");
+      const cipher = createCipheriv(algorithm, key, iv);
 
-        let encrypted = cipher.update(cipherText, "utf8", "hex");
-        encrypted += cipher.final("hex");
+      let encrypted = cipher.update(cipherText, "utf8", "hex");
+      encrypted += cipher.final("hex");
 
-        this.emit("encrypted", iv, encrypted);
-      });
+      this.emit("encrypted", iv.toString(), encrypted);
     });
   }
 
@@ -37,15 +37,13 @@ class Crypto extends Events {
     const algorithm = "aes-192-cbc";
     const key = scryptSync(password, "salt", 24);
 
-    const decipher = createDecipheriv(
-      algorithm,
-      key,
-      new Uint8Array(init_vector)
-    );
+    const decipher = createDecipheriv(algorithm, key, Buffer.from(init_vector));
 
     let decrypted = decipher.update(decipherText, "hex", "utf8");
     decrypted += decipher.final("utf8");
     this.emit("decrypted", decrypted);
+
+    return decrypted;
   }
 
   generateUid() {

@@ -2,12 +2,12 @@ const textEncoding = require("text-encoding");
 
 const toUint8Array = (string) => {
   let TextEncoder = textEncoding.TextEncoder;
-  return new TextEncoder().encode(string);
+  return new TextEncoder("utf-8").encode(string);
 };
 
 const toHexString = (uint8Arr) => {
   let TextDecoder = textEncoding.TextDecoder;
-  return new TextDecoder().decode(uint8Arr);
+  return new TextDecoder("utf-8").decode(uint8Arr);
 };
 
 module.exports = {
